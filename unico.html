@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Atividades</title>
+  <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/> -->
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #4a00e0, #8e2de2);
+      color: white;
+      padding: 1rem;
+    }
+
+    .gradient-header {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      padding: 1rem;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    main {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1s ease;
+    }
+
+    input, button {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    input {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(to right, #8e2de2, #4a00e0);
+      color: white;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .user-list ul, .atividade-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .atividade-list li {
+      background: rgba(0,0,0,0.2);
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .acoes button {
+      margin-right: 1rem;
+      background-color: white;
+      color: #4a00e0;
+    }
+
+    .ok {
+      color: #00ff90;
+      font-weight: bold;
+    }
+
+    .nok {
+      color: #ff4b5c;
+      font-weight: bold;
+    }
+
+    .progresso {
+      margin-top: 1rem;
+    }
+
+    .barra {
+      background: white;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .barra div {
+      height: 100%;
+      background: linear-gradient(to right, #00ff90, #00c9ff);
+      width: 0%;
+      transition: width 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <script defer src="https://protect.checkpoint.com/v2/r02/___https://cdn.jsdelivr.net/npm/vue@2"></script>___.YzJlOnRlbGVmb25pY2FicmF6aWw6YzpvOjQ4OWQwNmYxYjgwN2NhZjA5NTY4YmJhZDFhNDlkODhiOjc6ZjRlYjplODYxYmNkNWEzZDFkMmUyZmRmNGNjOTQ3NjlmNDNiZmY5NjQ2ZWVhY2ZiYmVkMzE0MjI4OGVjMDMyMzlhZjVhOnQ6VDpG;
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+      new Vue({
+        el: '#app',
+        data: {
+          isAdmin: false, // Troque para true para ver a tela do admin
+          newUser: '',
+          users: JSON.parse(localStorage.getItem('usuarios')) || [],
+          novaAtividade: { horario: '', descricao: '' },
+          atividades: JSON.parse(localStorage.getItem('atividades')) || []
+        },
+        computed: {
+          progresso() {
+            if (!this.atividades.length) return 0;
+            const concluidas = this.atividades.filter(a => a.status === 'ok' || a.status === 'nok').length;
+            return Math.round((concluidas / this.atividades.length) * 100);
+          }
+        },
+        methods: {
+          addUser() {
+            if (this.newUser && !this.users.includes(this.newUser)) {
+              this.users.push(this.newUser);
+              this.newUser = '';
+              localStorage.setItem('usuarios', JSON.stringify(this.users));
+            }
+          },
+          registrarAtividade() {
+            if (this.novaAtividade.horario && this.novaAtividade.descricao) {
+              this.atividades.push({
+                horario: this.novaAtividade.horario,
+                descricao: this.novaAtividade.descricao,
+                status: null,
+                horaConclusao: null
+              });
+              this.novaAtividade = { horario: '', descricao: '' };
+              this.salvar();
+            }
+          },
+          atualizarStatus(index, status) {
+            const hora = new Date().toLocaleTimeString();
+            this.atividades[index].status = status;
+            this.atividades[index].horaConclusao = hora;
+            this.salvar();
+          },
+          salvar() {
+            localStorage.setItem('atividades', JSON.stringify(this.atividades));
+          }
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header class="gradient-header">
+      <h1><i class="fas fa-tasks"></i> Controle de Atividades - Equipe de Análise</h1>
+    </header>
+
+    <main>
+      <section v-if="isAdmin">
+        <h2><i class="fas fa-user-cog"></i> Área do Administrador</h2>
+        <div>
+          <label for="newUser">Novo Usuário:</label>
+          <input v-model="newUser" id="newUser" placeholder="Nome do usuário" />
+          <button @click="addUser"><i class="fas fa-user-plus"></i> Cadastrar</button>
+        </div>
+        <div class="user-list">
+          <h3><i class="fas fa-users"></i> Usuários Cadastrados</h3>
+          <ul>
+            <li v-for="user in users" :key="user"><i class="fas fa-user"></i> {{ user }}</li>
+          </ul>
+        </div>
+      </section>
+
+      <section v-if="!isAdmin">
+        <h2><i class="fas fa-calendar-check"></i> Minhas Atividades</h2>
+        <div>
+          <label for="horario">Horário:</label>
+          <input type="text" v-model="novaAtividade.horario" placeholder="08:30 às 08:50" />
+          <input type="text" v-model="novaAtividade.descricao" placeholder="Descrição da atividade" />
+          <button @click="registrarAtividade"><i class="fas fa-plus-circle"></i> Adicionar</button>
+        </div>
+        <ul class="atividade-list">
+          <li v-for="(atividade, index) in atividades" :key="index">
+            <p><i class="fas fa-clock"></i> {{ atividade.horario }} - {{ atividade.descricao }}</p>
+            <p v-if="atividade.status">Status: <span :class="atividade.status">{{ atividade.status.toUpperCase() }}</span> ({{ atividade.horaConclusao }})</p>
+            <div class="acoes">
+              <button @click="atualizarStatus(index, 'ok')"><i class="fas fa-check"></i> OK</button>
+              <button @click="atualizarStatus(index, 'nok')"><i class="fas fa-times"></i> NOK</button>
+            </div>
+          </li>
+        </ul>
+        <div class="progresso">
+          <p><i class="fas fa-chart-line"></i> Progresso: {{ progresso }}%</p>
+          <div class="barra"><div :style="{ width: progresso + '%'}"></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
