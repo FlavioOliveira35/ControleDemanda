@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Atividades</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="painel-container">
+    <h2>Minhas Atividades</h2>
+    <label for="dataSelecionada">Selecione o dia:</label>
+    <input type="date" id="dataSelecionada" value="" onchange="carregarAtividades()" />
+    <div class="atividade-form">
+      <input type="time" id="horaInicio" placeholder="Início" />
+      <input type="time" id="horaFim" placeholder="Fim" />
+      <input type="text" id="descricao" placeholder="Descreva a atividade" />
+      <button onclick="adicionarAtividade()">Adicionar</button>
+    </div>
+    <div id="listaAtividades"></div>
+    <button onclick="logout()">Sair</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="painel.js"></script>
+</body>
+</html>
