@@ -1,5 +1,8 @@
+const db = firebase.firestore();
+const auth = firebase.auth();
+
 function login() {
-  
+  console.log("teste")
   const email = document.getElementById("email").value;
   const senha = document.getElementById("password").value;
 
