@@ -1,7 +1,7 @@
 function login() {
   const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  firebase.auth().signInWithEmailAndPassword(Email, Senha)
+  const senha = document.getElementById("password").value;
+  firebase.auth().signInWithEmailAndPassword(email, senha)
     .then((userCredential) => {
       const user = userCredential.user;
       // Verifica se é admin
